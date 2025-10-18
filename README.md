@@ -384,7 +384,7 @@ MIT License - see LICENSE file for details
 
 For questions or issues:
 - Open an issue on GitHub
-- Contact: hoangnt2601@fpt.com.vn
+- Contact: hoang.nguyentien.2601@gmail.com
 
 ---
 
