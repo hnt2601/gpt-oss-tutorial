@@ -1,0 +1,74 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "gpt-oss-tutorial"
+version = "1.0.0"
+description = "Comprehensive tutorial and research for GPT-OSS API"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [
+    {name = "GPT-OSS Tutorial Contributors"}
+]
+keywords = ["gpt-oss", "openai", "tutorial", "llm", "api"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "openai>=1.50.0,<2.0.0",  # Need 1.50+ for responses API, <2.0 for compatibility
+    "packaging>=23.0",  # For version checking
+    "python-dotenv>=1.0.0",
+    "requests>=2.31.0",
+    "pydantic>=2.0.0",
+    "Pillow>=10.0.0",
+    "datasets>=2.14.0",
+    "pandas>=2.0.0",
+    "tqdm>=4.65.0",
+    "pinecone-client>=3.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-asyncio>=0.21.0",
+    "ruff>=0.1.0",
+    "black>=23.0.0",
+]
+
+jupyter = [
+    "ipython>=8.12.0",
+    "jupyter>=1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/your-org/gpt-oss-tutorial"
+Documentation = "https://github.com/your-org/gpt-oss-tutorial/blob/main/README.md"
+Repository = "https://github.com/your-org/gpt-oss-tutorial.git"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src", "examples"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+select = ["E", "F", "W", "I", "N"]
+ignore = ["E501"]
+
+[tool.black]
+line-length = 100
+target-version = ["py310", "py311", "py312"]
+
