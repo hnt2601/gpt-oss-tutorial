@@ -23,7 +23,8 @@ classifiers = [
 ]
 
 dependencies = [
-    "openai>=1.50.0,<2.0.0",  # Need 1.50+ for responses API, <2.0 for compatibility
+    # Note: OpenAI SDK is NOT included in base dependencies due to version conflicts
+    # Install either 'standard' or 'voice' extras depending on your needs
     "packaging>=23.0",  # For version checking
     "python-dotenv>=1.0.0",
     "requests>=2.31.0",
@@ -36,6 +37,24 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# Standard examples (01-07) - requires OpenAI SDK 1.x
+standard = [
+    "openai>=1.50.0,<2.0.0",  # Need 1.50+ for responses API, <2.0 for compatibility
+]
+
+# Voice agent (08) - requires OpenAI SDK 2.x
+# Note: Cannot be installed together with 'standard' due to OpenAI SDK version conflict
+voice = [
+    "openai>=2.2.0",  # Required for openai-agents support
+    "openai-agents[voice]>=0.4.0",
+    "nest-asyncio>=1.5.8",
+    "numpy>=2.2.0",
+    "resampy>=0.4.2",
+    "soundfile>=0.12.1",
+    "websockets>=15.0",
+]
+
+# Development dependencies
 dev = [
     "pytest>=7.4.0",
     "pytest-asyncio>=0.21.0",
@@ -43,6 +62,7 @@ dev = [
     "black>=23.0.0",
 ]
 
+# Jupyter notebook support
 jupyter = [
     "ipython>=8.12.0",
     "jupyter>=1.0.0",

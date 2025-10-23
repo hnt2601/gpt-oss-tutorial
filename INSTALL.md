@@ -1,232 +1,235 @@
 # Installation Guide
 
-## Quick Start
+This guide covers installation options for all GPT-OSS Tutorial examples.
 
-### 1. Install UV (Recommended)
+## 📦 Prerequisites
 
-UV is a fast Python package installer:
+- Python 3.10 or higher
+- pip (Python package installer)
+- Virtual environment tool (recommended: `venv` or `conda`)
 
-```bash
-# macOS/Linux
-curl -LsSf https://astral.sh/uv/install.sh | sh
+## 🚀 Quick Start
 
-# Windows (PowerShell)
-powershell -c "irm https://astral.sh/uv/install.ps1 | iex"
-```
+### Option 1: Standard Examples (Recommended for Most Users)
 
-### 2. Set Up Virtual Environment
+For examples 01-07 (basic, structured output, tools, multimodal, stateful, advanced, reasoning):
 
 ```bash
-cd gpt-oss-tutorial
-
 # Create virtual environment
-uv venv .venv
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Activate it
-source .venv/bin/activate  # macOS/Linux
-.venv\Scripts\activate     # Windows
+# Install using requirements.txt (includes OpenAI SDK 1.x)
+pip install -r requirements.txt
+
+# OR using pyproject.toml
+pip install -e ".[standard]"
 ```
 
-### 3. Install the Package
+### Option 2: Voice Agent Only (Example 08)
+
+For voice agent example with OpenAI Agents SDK (requires OpenAI SDK 2.x):
 
 ```bash
-# Install in editable mode (recommended for development)
-uv pip install -e .
+# Create a separate virtual environment
+python -m venv venv-voice
+source venv-voice/bin/activate  # On Windows: venv-voice\Scripts\activate
 
-# Or with development tools
-uv pip install -e ".[dev]"
-
-# Or with Jupyter support
-uv pip install -e ".[jupyter]"
-
-# Or with everything
-uv pip install -e ".[dev,jupyter]"
+# Install with voice dependencies
+pip install -e ".[voice]"
 ```
 
-### 4. Configure Environment
+**Note:** Due to OpenAI SDK version conflict, voice agent CANNOT be installed in the same environment as standard examples.
 
-```bash
-# Copy template
-cp .env.example .env
-
-# Edit .env and add your keys
-nano .env  # or use your favorite editor
-```
-
-Required in `.env`:
-```env
-API_KEY=your_gpt_oss_api_key_here
-BASE_URL=https://mkp-api.fptcloud.com
-MODEL_NAME=gpt-oss-20b
-PINECONE_API_KEY=your_pinecone_key_here  # Optional, for RAG examples
-```
-
-### 5. Verify Installation
-
-```bash
-# Run a simple example
-python examples/01_basic/instructions.py
-
-# Run tests
-pytest tests/
-```
-
-## Alternative: Traditional pip
-
-If you prefer traditional pip:
-
-```bash
-# Create venv
-python -m venv .venv
-source .venv/bin/activate
-
-# Install
-pip install -e .
-
-# Or with extras
-pip install -e ".[dev,jupyter]"
-```
-
-## Troubleshooting
-
-### ModuleNotFoundError: No module named 'src'
-
-**Problem**: The package isn't installed in editable mode.
-
-**Solution**:
-```bash
-# Make sure you're in the project root
-cd /path/to/gpt-oss-tutorial
-
-# Install in editable mode
-uv pip install -e .
-```
-
-### Import errors after installation
-
-**Problem**: Virtual environment not activated.
-
-**Solution**:
-```bash
-# Check if venv is active (should see (.venv) in prompt)
-source .venv/bin/activate
-
-# Verify package is installed
-pip list | grep gpt-oss-tutorial
-```
-
-### Dependencies conflict
-
-**Problem**: Conflicting package versions.
-
-**Solution**:
-```bash
-# Clean install
-rm -rf .venv
-uv venv .venv
-source .venv/bin/activate
-uv pip install -e ".[dev]"
-```
-
-### Pinecone examples fail
-
-**Problem**: PINECONE_API_KEY not set.
-
-**Solution**:
-```bash
-# Add to .env file
-echo "PINECONE_API_KEY=your_key_here" >> .env
-
-# Or set in shell
-export PINECONE_API_KEY=your_key_here
-```
-
-## Development Setup
+### Option 3: Development Setup
 
 For contributors and developers:
 
 ```bash
-# Install with all dev tools
-uv pip install -e ".[dev]"
+# For standard examples development
+python -m venv venv-dev
+source venv-dev/bin/activate  # On Windows: venv-dev\Scripts\activate
+pip install -e ".[standard,dev,jupyter]"
 
-# Install pre-commit hooks (optional)
-pre-commit install
-
-# Run linting
-ruff check src/ examples/ tests/
-
-# Run formatting
-black src/ examples/ tests/
-
-# Run type checking (if mypy is added)
-mypy src/
+# OR for voice agent development (separate venv)
+python -m venv venv-voice-dev
+source venv-voice-dev/bin/activate
+pip install -e ".[voice,dev,jupyter]"
 ```
 
-## Docker Setup (Optional)
+## 🔧 Installation Options Explained
 
-If you prefer Docker:
+The project uses `pyproject.toml` for dependency management with several optional groups:
 
-```dockerfile
-# Dockerfile (create this)
-FROM python:3.11-slim
+| Group | Command | Includes |
+|-------|---------|----------|
+| **standard** | `pip install -e ".[standard]"` | OpenAI SDK 1.x for examples 01-07 |
+| **voice** | `pip install -e ".[voice]"` | OpenAI SDK 2.x + voice dependencies (example 08) |
+| **dev** | `pip install -e ".[dev]"` | Testing and code quality tools |
+| **jupyter** | `pip install -e ".[jupyter]"` | Jupyter notebook support |
 
-WORKDIR /app
-COPY . .
+**Combine multiple groups:**
+```bash
+# Standard with dev tools
+pip install -e ".[standard,dev]"
 
-RUN pip install uv
-RUN uv pip install -e ".[dev]"
-
-CMD ["python", "examples/01_basic/instructions.py"]
+# Voice with dev and jupyter
+pip install -e ".[voice,dev,jupyter]"
 ```
+
+## ⚠️ Important Notes
+
+### OpenAI SDK Version Conflict
+
+There is a version conflict between standard examples and the voice agent:
+
+- **Examples 01-07**: Require `openai>=1.50.0,<2.0.0`
+- **Example 08 (Voice)**: Requires `openai>=2.2.0` for `openai-agents` support
+
+**Solutions:**
+
+1. **Use separate virtual environments** (Recommended):
+   ```bash
+   # For standard examples
+   python -m venv venv-standard
+   source venv-standard/bin/activate
+   pip install -r requirements.txt
+   
+   # For voice agent
+   python -m venv venv-voice
+   source venv-voice/bin/activate
+   pip install -e ".[voice]"
+   ```
+
+2. **Switch between versions**:
+   ```bash
+   # For standard examples
+   pip install "openai>=1.50.0,<2.0.0"
+   
+   # For voice agent
+   pip install "openai>=2.2.0" openai-agents[voice]
+   ```
+
+## 🧪 Verify Installation
+
+### For Standard Examples
 
 ```bash
-# Build and run
-docker build -t gpt-oss-tutorial .
-docker run --env-file .env gpt-oss-tutorial
+python -c "import openai; print(f'OpenAI SDK version: {openai.__version__}')"
+python check_setup.py
 ```
 
-## Platform-Specific Notes
+Expected output: `OpenAI SDK version: 1.x.x`
+
+### For Voice Agent
+
+```bash
+python -c "import openai; print(f'OpenAI SDK version: {openai.__version__}')"
+python -c "import agents; print('OpenAI Agents SDK installed')"
+```
+
+Expected output: 
+```
+OpenAI SDK version: 2.x.x
+OpenAI Agents SDK installed
+```
+
+## 🌍 Environment Variables
+
+Create a `.env` file in the project root:
+
+```bash
+# Required
+API_KEY=your_fpt_cloud_api_key_here
+
+# Optional (defaults shown)
+OPENAI_BASE_URL=https://mkp-api.fptcloud.com
+STT_MODEL_NAME=whisper-large-v3-turbo
+LLM_MODEL_NAME=gpt-oss-20b
+```
+
+## 📚 Platform-Specific Notes
 
 ### macOS
-- UV install works via curl
-- If you get security warnings, go to System Preferences → Security & Privacy
 
-### Linux
-- May need to add UV to PATH: `export PATH="$HOME/.cargo/bin:$PATH"`
-- Add to `.bashrc` or `.zshrc` for persistence
+```bash
+# Install system dependencies for audio processing (voice agent)
+brew install libsndfile
+
+# Then install Python packages
+pip install -e ".[voice]"
+```
+
+### Linux (Ubuntu/Debian)
+
+```bash
+# Install system dependencies for audio processing
+sudo apt-get update
+sudo apt-get install libsndfile1 ffmpeg
+
+# Then install Python packages
+pip install -e ".[voice]"
+```
 
 ### Windows
-- Use PowerShell (not CMD)
-- Activate venv: `.venv\Scripts\activate`
-- If execution policy blocks UV install, run: `Set-ExecutionPolicy RemoteSigned -Scope CurrentUser`
 
-## Verification Checklist
+```bash
+# No additional system dependencies needed
+# Just install Python packages
+pip install -e ".[voice]"
+```
 
-After installation, verify:
+## 🐛 Troubleshooting
 
-- [ ] Virtual environment is activated
-- [ ] Package is installed: `pip list | grep gpt-oss-tutorial`
-- [ ] Can import: `python -c "from src.client import create_client; print('OK')"`
-- [ ] Environment variables set: `python -c "from src.config import get_config; print(get_config())"`
-- [ ] Basic example runs: `python examples/01_basic/instructions.py`
-- [ ] Tests pass: `pytest tests/test_examples.py::TestConfig -v`
+### Issue: `ModuleNotFoundError: No module named 'openai'`
 
-## Need Help?
+**Solution**: Make sure you activated the virtual environment and installed dependencies:
+```bash
+source venv/bin/activate
+pip install -r requirements.txt
+```
 
-If you're still having issues:
+### Issue: Version conflict with `openai` package
 
-1. Check that you're in the project root directory
-2. Ensure virtual environment is activated
-3. Try a clean reinstall: `rm -rf .venv && uv venv .venv && source .venv/bin/activate && uv pip install -e .`
-4. Check Python version: `python --version` (needs 3.10+)
-5. Open an issue with error details
+**Solution**: Use separate virtual environments for standard and voice examples (see above).
 
-## Next Steps
+### Issue: `soundfile` installation fails on macOS
 
-Once installed successfully:
+**Solution**: Install libsndfile first:
+```bash
+brew install libsndfile
+pip install soundfile
+```
 
-1. Read the main [README.md](README.md)
-2. Check out [examples/01_basic/README.md](examples/01_basic/README.md)
-3. Try running examples progressively
-4. Explore module READMEs for detailed docs
+### Issue: `ImportError: cannot import name 'Agent' from 'agents'`
 
+**Solution**: Make sure you're using OpenAI SDK 2.x:
+```bash
+pip install "openai>=2.2.0" openai-agents[voice]
+```
+
+## 📖 Next Steps
+
+After installation:
+
+1. **Review examples**: Start with `examples/01_basic/`
+2. **Run check script**: `python check_setup.py`
+3. **Read documentation**: Check each example's `README.md`
+4. **Try tutorials**: Follow the tutorials in order (01 → 08)
+
+## 💬 Support
+
+If you encounter issues:
+
+1. Check this installation guide
+2. Review the [main README](README.md)
+3. Check example-specific READMEs
+4. Verify Python version: `python --version` (should be 3.10+)
+5. Verify pip version: `pip --version`
+
+## 🔗 References
+
+- [Python Virtual Environments](https://docs.python.org/3/tutorial/venv.html)
+- [pip Documentation](https://pip.pypa.io/)
+- [OpenAI Python SDK](https://github.com/openai/openai-python)
+- [OpenAI Agents SDK](https://github.com/openai/openai-agents)

@@ -35,6 +35,13 @@ This repository provides structured examples and in-depth exploration of GPT-OSS
 - Reasoning summaries
 - Tool routing
 
+### 6. Voice Agent
+- Speech-to-text with Whisper API
+- Audio transcription and processing
+- OpenAI Agents SDK integration
+- Vietnamese-to-English translation
+- Async audio processing
+
 ## 🚀 Quick Start
 
 ### Prerequisites
@@ -69,11 +76,17 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 uv venv .venv
 source .venv/bin/activate  # On Windows: .venv\Scripts\activate
 
-# Install the package in editable mode (this makes 'src' importable)
-uv pip install -e .
+# Install the package with standard dependencies (examples 01-07)
+uv pip install -e ".[standard]"
 
 # Or install with development dependencies
-uv pip install -e ".[dev]"
+uv pip install -e ".[standard,dev]"
+
+# For voice agent (example 08) - requires separate venv due to OpenAI SDK version conflict
+# Create a separate environment:
+python -m venv venv-voice
+source venv-voice/bin/activate
+pip install -e ".[voice]"
 
 # Copy environment template
 cp .env.example .env
@@ -114,6 +127,9 @@ python examples/04_multimodal/image_url.py
 
 # RAG
 python examples/06_advanced/rag_pinecone.py
+
+# Voice Agent (requires separate venv with voice dependencies)
+python examples/08_voice_agent/voice_agent.py
 ```
 
 ### Using the Shared Client
@@ -218,6 +234,21 @@ Production-ready patterns:
 - Tool routing strategies
 - Reasoning summaries
 - Multi-step workflows
+
+### 07_reasoning - Reasoning Models
+Working with reasoning-enabled models:
+- Understanding reasoning tokens
+- Extracting thought processes
+- Optimizing reasoning performance
+
+### 08_voice_agent - Voice Agent
+Speech-to-text integration with AI agents:
+- Whisper API for audio transcription
+- OpenAI Agents SDK integration
+- Vietnamese language support
+- Async audio processing
+- Multi-language translation
+- **Note**: Requires OpenAI SDK 2.x (separate venv recommended)
 
 ## 🧪 Testing
 
